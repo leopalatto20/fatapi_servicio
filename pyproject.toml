@@ -1,0 +1,14 @@
+[project]
+name = "fatapi-servicio"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi[standard]>=0.135.2",
+    "firebase-admin>=7.3.0",
+    "firebase-auth>=3.0.28",
+    "pymysql>=1.1.2",
+    "sqlmodel>=0.0.37",
+]
