@@ -10,7 +10,14 @@ from sqlmodel.sql.expression import Select
 
 from ..common.guards import admin_guard
 from ..db import SessionDep
-from ..models import EnrolmentToken, Project, ProjectCreate, ProjectPublic, User
+from ..models import (
+    EnrolmentToken,
+    EnrolmentTokenPublic,
+    Project,
+    ProjectCreate,
+    ProjectPublic,
+    User,
+)
 
 router = APIRouter(tags=["projects"], prefix="/projects")
 
@@ -29,8 +36,10 @@ async def get_projects(session: SessionDep):
     return session.exec(Select(Project)).all()
 
 
-@router.post("{project_id}/tokens")
-async def create_project_tokens(project_id: int, session: SessionDep):
+@router.post("{project_id}/tokens", response_model=list[EnrolmentTokenPublic])
+async def create_project_tokens(
+    project_id: int, session: SessionDep, _: User = Depends(admin_guard)
+):
     project = session.get(Project, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -50,3 +59,16 @@ async def create_project_tokens(project_id: int, session: SessionDep):
         tokens.append(token)
 
     return {"tokens": tokens}
+
+
+@router.get("{project_id}/tokens", response_model=list[EnrolmentTokenPublic])
+async def get_project_tokens(
+    project_id: int, session: SessionDep, _: User = Depends(admin_guard)
+):
+    project = session.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return session.exec(
+        Select(EnrolmentToken).where(EnrolmentToken.id_project == project_id)
+    ).all()
