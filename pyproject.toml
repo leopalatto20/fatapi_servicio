@@ -9,6 +9,8 @@ dependencies = [
     "fastapi[standard]>=0.135.2",
     "firebase-admin>=7.3.0",
     "firebase-auth>=3.0.28",
+    "pillow>=10.0.0",
     "pymysql>=1.1.2",
+    "qrcode>=8.2",
     "sqlmodel>=0.0.37",
 ]
