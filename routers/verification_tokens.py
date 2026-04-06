@@ -3,13 +3,14 @@ import random
 import string
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from qrcode import QRCode
 from qrcode.image.pil import PilImage
 from sqlalchemy.sql.dml import Insert
 
+from ..common.guards import admin_guard
 from ..db import SessionDep
-from ..models import VerificationToken
+from ..models import User, VerificationToken
 
 router = APIRouter(prefix="/verification-tokens", tags=["verification-tokens"])
 
@@ -17,7 +18,7 @@ QR_CODES_DIR = "static/qr_codes"
 
 
 @router.post("")
-def create_verification_token(session: SessionDep):
+def create_verification_token(session: SessionDep, _: User = Depends(admin_guard)):
     os.makedirs(QR_CODES_DIR, exist_ok=True)
 
     length = 8
