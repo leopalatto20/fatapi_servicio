@@ -36,6 +36,26 @@ async def get_projects(session: SessionDep):
     return session.exec(Select(Project)).all()
 
 
+@router.get("{project_id}", response_model=ProjectPublic)
+async def get_project(project_id: int, session: SessionDep):
+    project = session.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+
+@router.delete("{project_id}")
+async def delete_project(
+    project_id: int, session: SessionDep, _: User = Depends(admin_guard)
+):
+    project = session.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    session.delete(project)
+    session.commit()
+
+
 @router.post("{project_id}/tokens", response_model=list[EnrolmentTokenPublic])
 async def create_project_tokens(
     project_id: int, session: SessionDep, _: User = Depends(admin_guard)
