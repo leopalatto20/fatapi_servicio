@@ -24,9 +24,7 @@ def register(user: UserCreate, session: SessionDep):
             password=user.password,
         )
     except auth.EmailAlreadyExistsError:
-        raise HTTPException(
-            status_code=400, detail="Email already registered in Firebase"
-        )
+        raise HTTPException(status_code=400, detail="Email already registered")
 
     db_user = User(
         id=user.id,
